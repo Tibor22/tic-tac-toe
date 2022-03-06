@@ -173,7 +173,6 @@ img {
   span {
     font-size: 1.5rem;
   }
-
   .tic-tac-toe-container {
     width: 400px;
     height: 400px;
@@ -210,7 +209,7 @@ img {
     margin-bottom: 0.7rem;
   }
   .tic-tac-toe-container {
-    width: 100%;
+    width: 80%;
     height: 50%;
   }
 
@@ -224,6 +223,13 @@ img {
   .btn {
     margin-top: 2rem;
   }
+  .start-btn {
+    margin-right: 1rem;
+  }
+
+  label {
+    margin-left: 1rem;
+  }
 
   .result {
     width: 100%;
@@ -235,5 +241,22 @@ img {
 
   .again-btn {
     margin-top: 0.4rem;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .tic-tac-toe-container {
+    width: 100%;
+    height: 50%;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .instruction {
+    left: 0;
+    top: 1%;
+  }
+  html {
+    font-size: 70%;
   }
 }
