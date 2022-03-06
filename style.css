@@ -1,0 +1,146 @@
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Fredoka", sans-serif;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: rgb(224, 120, 120);
+  flex-direction: column;
+}
+.tic-tac-toe-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  height: 500px;
+  width: 500px;
+  background-color: rgb(211, 211, 127);
+}
+.square {
+  border: 1px solid rgb(116, 112, 112);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  cursor: pointer;
+}
+
+/* Welcome Modal */
+
+.welcome {
+  position: absolute;
+  height: 35%;
+  width: 40%;
+  background-color: rgb(157, 229, 157);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: all 0.5s;
+}
+
+form {
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 2rem;
+}
+
+#board {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding: 3px 18px 3px 10px;
+  background-color: rgb(157, 229, 157);
+  background-image: url("tic-tac-toe-2.png"),
+    linear-gradient(to bottom, #e5e5e5, #f4f4f4); /* Standard syntax; must be last */
+  background-position: center right;
+  background-repeat: no-repeat;
+  border: 1px solid #aaa;
+  border-radius: 2px;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  color: #555;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+/* Overlay */
+
+.overlay {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.561);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transition: all 0.5s;
+}
+
+.btn {
+  border: none;
+  outline: none;
+  padding: 0.7rem;
+  margin-left: 2rem;
+  cursor: pointer;
+  background-color: rgb(84, 192, 84);
+  color: white;
+}
+
+.btn:hover {
+  background-color: rgb(69, 138, 69);
+  transition: all 0.2s;
+}
+
+label {
+  margin-right: 0.6rem;
+}
+
+@media screen and (max-width: 1300px) {
+  .welcome {
+    height: 200px;
+    width: 60%;
+  }
+}
+
+.hidden {
+  opacity: 0;
+  transition: all 0.5s;
+  visibility: hidden;
+}
+
+.instruction {
+  position: absolute;
+  left: 0;
+  top: 10%;
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  background-color: #d3d37f;
+  height: 2.4rem;
+  overflow: hidden;
+  border-radius: 0px 8px 8px 0px;
+  width: 10rem;
+  transition: height 0.4s, width 0.8s 0.2s;
+  padding-left: 1rem;
+}
+
+.instruction:hover {
+  padding: 1rem;
+  height: 9.6rem;
+  width: 30rem;
+  transition: width 0.4s, height 0.8s 0.4s, padding 0.8s 0.4s;
+  cursor: pointer;
+}
+
+img {
+  transform: translateY(8px);
+  width: 32px;
+  height: 32px;
+}
