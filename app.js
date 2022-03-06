@@ -21,6 +21,8 @@ form.addEventListener("submit", function (e) {
   // Decide the board size
   boardSize = +select.value.slice(-1);
 
+  console.log(boardSize);
+
   // Set up how many square you need to win
   squareToWin = boardSize === 3 ? boardSize : boardSize - 1;
   // Render board
@@ -38,8 +40,9 @@ form.addEventListener("submit", function (e) {
   // Create instruction
 
   let html = `<div class="instruction">
-  RULES <img src="flag.png" alt=""> <br>
-  You Need ${boardSize} Square in Diagonal to WIN or <br>
+  <span>RULES</span>
+   <img src="flag.png" alt=""> <br>
+  You Need ${squareToWin} Square in Diagonal to WIN or <br>
   You Need ${squareToWin} Square in row to WIN or <br>
   You Need ${squareToWin} Square in column to WIN 
   </div>`;
@@ -99,6 +102,7 @@ function placeXOrYOnBoard(e) {
 
     //If board is  full reset
     if (takeTurns === boardSize * boardSize) {
+      displayResult("DRAW");
       reset();
     }
   } else {
@@ -117,6 +121,8 @@ function placeXOrYOnBoard(e) {
 
     //If board is  full reset
     if (takeTurns === boardSize * boardSize) {
+      console.log(takeTurns);
+      displayResult("DRAW");
       reset();
     }
   }
@@ -137,7 +143,7 @@ function checkForRows(squaresArr, testFor) {
           sumUp[row].length === squareToWin &&
           checkIfSequential(sumUp[row])
         ) {
-          alert(testFor + " WON ROWS");
+          displayResult(testFor);
           reset();
         }
       }
@@ -154,14 +160,15 @@ function checkForColumn(squaresArr, testFor) {
 
   for (let row = 0; row < boardSize; row++) {
     for (let column = 0; column < boardSize; column++) {
-      if (chunks[row][column].innerText === testFor) {
+      if (chunks[row][column] === undefined) continue;
+      if (chunks[row][column]?.innerText === testFor) {
         sumUp[column] += `${row}`;
 
         if (
           sumUp[column].length === squareToWin &&
           checkIfSequential(sumUp[column])
         ) {
-          alert(testFor + " WON COLUMNS");
+          displayResult(testFor);
           reset();
         }
       }
@@ -174,31 +181,103 @@ function checkForDiagonal(squaresArr, testFor) {
   // Cut boards into rows
   let chunks = createArrayChunks(squaresArr);
 
-  let southEastDiagonal = 0;
-  let southWestDiagonal = 0;
   for (let row = 0; row < boardSize; row++) {
     // Check for SouthEastDiagonal
+    let southEastDiagonal = 0;
+    let southWestDiagonal = 0;
     for (let column = 0; column < boardSize; column++) {
-      if (row === column && chunks[row][column].innerText === testFor) {
-        southEastDiagonal++;
-        if (southEastDiagonal === boardSize) {
-          alert(testFor + " WON");
-          reset();
-        }
+      southEastDiagonal = checkForDiagonalStart(chunks, row, column, testFor);
+      // if (row === column && chunks[row][column].innerText === testFor) {
+      //   southEastDiagonal += checkForDiagonalStart(
+      //     chunks,
+      //     row,
+      //     column,
+      //     testFor
+      //   );
+      //   // southEastDiagonal++;
+      //   // if (southEastDiagonal === squareToWin) {
+      //   //   alert(testFor + " WON");
+      //   //   reset();
+      //   // }
+      // }
+      if (southEastDiagonal === squareToWin) {
+        displayResult(testFor);
+        reset();
       }
     }
     // Check for SouthWestDiagonal
     for (let column = boardSize - 1 - row; column >= 0; column--) {
-      if (chunks[row][column].innerText === testFor) {
-        southWestDiagonal++;
-        if (southWestDiagonal === boardSize) {
-          alert(testFor + " WON");
-          reset();
-        }
+      southWestDiagonal = checkForWestDiagonal(chunks, row, column, testFor);
+      if (southWestDiagonal === squareToWin) {
+        displayResult(testFor);
+        reset();
       }
-      break;
     }
   }
+}
+
+function checkForWestDiagonal(chunks, row, column, testFor) {
+  let southWestDiagonal = 0;
+  let rowCounter = 0;
+  // console.log(row, column);
+
+  if (
+    row === 0 ||
+    row === 1 ||
+    column === boardSize - 1 ||
+    column === boardSize - 2
+  ) {
+    for (let i = 0; i < squareToWin; i++) {
+      if (chunks[row + rowCounter] === undefined) return southWestDiagonal;
+      // console.log(chunks[row + rowCounter][column - i]);
+
+      if (chunks[row + rowCounter][column - i]?.innerText === testFor) {
+        southWestDiagonal++;
+      }
+      rowCounter++;
+    }
+  }
+
+  if (southWestDiagonal === squareToWin) return southWestDiagonal;
+  else {
+    southWestDiagonal = 0;
+    rowCounter = 1;
+    if (
+      row === 0 ||
+      row === 1 ||
+      column === boardSize - 1 ||
+      column === boardSize - 2
+    ) {
+      for (let i = 0; i < squareToWin; i++) {
+        if (chunks[row + rowCounter] === undefined) return southWestDiagonal;
+        // console.log(chunks[row + rowCounter][column - i]);
+
+        if (chunks[row + rowCounter][column - i]?.innerText === testFor) {
+          southWestDiagonal++;
+          // console.log(southWestDiagonal);
+        }
+        rowCounter++;
+      }
+    }
+    return southWestDiagonal;
+  }
+}
+
+function checkForDiagonalStart(chunks, row, column, testFor) {
+  let southEastDiagonal = 0;
+  if (row === 0 || row === 1 || column === 0 || column === 1) {
+    for (let i = 0; i < squareToWin; i++) {
+      if (chunks[row + i] === undefined) return southEastDiagonal;
+
+      if (
+        chunks[row + i][column + i]?.innerText === testFor
+        // chunks[column + i][row + i]?.innerText === testFor
+      ) {
+        southEastDiagonal++;
+      }
+    }
+  }
+  return southEastDiagonal;
 }
 
 // Check for sequence in rows or columns
@@ -233,13 +312,62 @@ function createArrayChunks(squaresArr) {
   return chunks;
 }
 
+//RESULT MESSAGE
+
+function displayResult(player = "DRAW") {
+  let html;
+  if (player !== "DRAW") {
+    html = `
+    <div class="result">
+    <h1>
+      Congratulations
+      <span>${player}</span><br />
+      You <span>WON!</span>
+    </h1>
+    <button class="again-btn btn">Play Again!</button>
+    </div>
+    `;
+  } else {
+    html = `
+    <div class="result">
+    <h1>
+      <span>${player}</span><br />
+      Better luck <span> next time!</span>
+    </h1>
+    <button class="again-btn btn">Play Again!</button>
+    </div>
+    `;
+  }
+  ticTacToeContainer.innerText = "";
+  let playAgainBtn, result;
+  if (!document.querySelector(".result")) {
+    wrapper.insertAdjacentHTML("beforeend", html);
+  }
+  overlay.classList.remove("hidden");
+  result = document.querySelector(".result");
+  result.classList.remove("hidden");
+  playAgainBtn = document.querySelector(".again-btn");
+  reset();
+  playAgainBtn.addEventListener("click", () => {
+    result.classList.add("hidden");
+    welcomeMessage.classList.remove("hidden");
+    console.log("click");
+    wrapper.removeChild(result);
+    wrapper.removeChild(document.querySelector(".instruction"));
+  });
+}
+
 // Reset the game
 function reset() {
-  squaresArr.forEach((square) => {
-    square.innerText = "";
-  });
-  takeTurns = 0;
-  console.log(squaresArr);
+  squaresArr = [];
+  setTimeout(() => {
+    squaresArr.forEach((square) => {
+      square.innerText = "";
+    });
+
+    takeTurns = 0;
+    console.log(squaresArr);
+  }, 1000);
 }
 
 // for (let i = 0; i < 4; i++) {
