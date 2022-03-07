@@ -263,7 +263,7 @@ img {
 @media screen and (max-height: 750px) {
   .tic-tac-toe-container {
     width: 100%;
-    height: 58%;
+    height: 53%;
   }
   html {
     font-size: 65%;
