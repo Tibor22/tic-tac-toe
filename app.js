@@ -8,6 +8,12 @@ class Player {
     this.shadowBoard = shadowBoard;
     this.isAttack = false;
     this.hitShip = [];
+    this.carrier = [];
+    this.battleship = [];
+    this.cruiser = [];
+    this.submarine = [];
+    this.destroyer = [];
+    this.direction = "vertical";
   }
 
   _attack(enemy) {}
@@ -24,6 +30,7 @@ class App {
 
   constructor() {
     this._createBoard();
+    this._changeDirection();
   }
 
   // Create board for each player
@@ -77,6 +84,60 @@ class App {
     }
   }
 
+  _changeDirection() {
+    let directionBtn = document.querySelectorAll(".turn");
+    let count = 0;
+
+    directionBtn.forEach((btn) => {
+      addEventListener("click", (e) => {
+        // Get current player
+        //Player1
+        console.log(e.target);
+        console.log(count);
+        count++;
+        if (count % 2 === 1) return;
+        if (
+          e.target.classList.contains("turn-1") &&
+          this.player1.direction === "vertical"
+        ) {
+          console.log("PLAYER1");
+          e.target.innerText = "TURN SHIP VERTICALLY";
+          this.player1.direction = "horizontal";
+        } else if (
+          e.target.classList.contains("turn-1") &&
+          this.player1.direction === "horizontal"
+        ) {
+          console.log("PLAYER1");
+          e.target.innerText = "TURN SHIP HORIZONTALLY";
+          this.player1.direction = "vertical";
+        }
+        if (
+          e.target.classList.contains("turn-2") &&
+          this.player2.direction === "vertical"
+        ) {
+          console.log("PLAYER2 HORIZOZNTAL");
+          e.target.innerText = "TURN SHIP VERTICALLY";
+          this.player2.direction = "horizontal";
+        } else if (
+          e.target.classList.contains("turn-2") &&
+          this.player2.direction === "horizontal"
+        ) {
+          console.log("PLAYER2 VERTICAL");
+          e.target.innerText = "TURN SHIP HORIZONTALLY";
+          this.player2.direction = "vertical";
+        }
+      });
+    });
+  }
+
+  _checkIfOutOfMap(row, column, player, num) {
+    if (row >= 11 || column >= 11) {
+      alert("YOUR OUT OF THE MAP");
+      // this._placeShip(player, num);
+      return true;
+    }
+  }
+
   _placeShip(player1, num = 1) {
     let maxNumOfShip = 0;
     const shipPositions = [];
@@ -84,19 +145,69 @@ class App {
     player1.board.querySelectorAll(".board-col").forEach((col) => {
       col.addEventListener("click", (e) => {
         if (this.gameState !== "placeShip") return;
-        if (maxNumOfShip < 3) {
-          console.log(e.target);
+        if (maxNumOfShip < 5) {
           e.stopPropagation();
-          e.target.classList.add(`ship-${num}`);
-          maxNumOfShip += 1;
+          // e.target.classList.add(`ship-${num}`);
 
-          shipPositions.push([
-            e.target.parentNode.dataset.number,
-            e.target.dataset.number,
-          ]);
+          console.log(player1.direction);
+          // Decide wether ship placed vertically or horizontally
+          if (player1.direction === "vertical") {
+            // Place ships vertically
+            for (let j = 0; j < 5 - maxNumOfShip; j++) {
+              let row = e.target.parentNode.dataset.number;
+              let currRow = +row + j;
+              if (this._checkIfOutOfMap(currRow, e.target.dataset.number))
+                continue;
+              shipPositions.push([currRow, e.target.dataset.number]);
+              if (maxNumOfShip === 0)
+                player1.carrier.push([currRow, e.target.dataset.number]);
+              if (maxNumOfShip === 1)
+                player1.battleship.push([currRow, e.target.dataset.number]);
+              if (maxNumOfShip === 2)
+                player1.cruiser.push([currRow, e.target.dataset.number]);
+              if (maxNumOfShip === 3)
+                player1.submarine.push([currRow, e.target.dataset.number]);
+              if (maxNumOfShip === 4)
+                player1.destroyer.push([currRow, e.target.dataset.number]);
+
+              console.log(player1.carrier);
+            }
+          } else if (player1.direction === "horizontal") {
+            // Place ships horizontally
+            for (let j = 0; j < 5 - maxNumOfShip; j++) {
+              let row = e.target.parentNode.dataset.number;
+              let column = e.target.dataset.number;
+              let currColumn = +column + j;
+              if (this._checkIfOutOfMap(row, currColumn)) continue;
+              shipPositions.push([row, currColumn]);
+              if (maxNumOfShip === 1) player1.carrier.push([row, currColumn]);
+              if (maxNumOfShip === 2)
+                player1.battleship.push([row, currColumn]);
+              if (maxNumOfShip === 3) player1.cruiser.push([row, currColumn]);
+              if (maxNumOfShip === 4) player1.submarine.push([row, currColumn]);
+              if (maxNumOfShip === 5) player1.destroyer.push([row, currColumn]);
+            }
+          }
+
+          player1.shipPositions = shipPositions;
+          player1.shipPositions.forEach((ship, i) => {
+            let row = +ship[0];
+            let column = +ship[1];
+            let shipSquare = player1.board
+              .querySelectorAll(".board-row")
+              [row].querySelectorAll(".board-col")[column];
+            shipSquare.classList.add(`ship-${num}`);
+            if (i === player1.shipPositions.length - 1)
+              shipSquare.style.borderRadius = "0px 0px 20px 20px";
+            if (i === 0) {
+              console.log(i);
+              shipSquare.style.borderRadius = "20px 20px 0px 0px";
+            }
+          });
+          maxNumOfShip += 1;
           console.log(shipPositions);
         }
-        if (maxNumOfShip === 3) {
+        if (maxNumOfShip === 5) {
           maxNumOfShip = 0;
           player1.shipPositions = shipPositions;
           console.log("turn");
@@ -159,29 +270,29 @@ class App {
           col.classList.add("clicked");
           numOfAttack++;
           if (numOfAttack === 1) {
-            document.querySelectorAll(`.ship-${calcNum}`).forEach((ship) => {
-              defender.shipPositions.forEach((ship) => {
-                let row = +ship[0];
-                let column = +ship[1];
-                defender.board
-                  .querySelectorAll(".board-row")
-                  [row].querySelectorAll(".board-col")[
-                  column
-                ].style.backgroundColor = "blue";
-              });
-
-              this._checkIfShipHit(e.target, defender, calcNum);
-
-              defender.hitShip.forEach((ship) => {
-                let row = +ship[0];
-                let column = +ship[1];
-                defender.board
-                  .querySelectorAll(".board-row")
-                  [row].querySelectorAll(".board-col")[
-                  column
-                ].style.backgroundColor = "green";
-              });
+            // document.querySelectorAll(`.ship-${calcNum}`).forEach((ship) => {
+            defender.shipPositions.forEach((ship) => {
+              let row = +ship[0];
+              let column = +ship[1];
+              defender.board
+                .querySelectorAll(".board-row")
+                [row].querySelectorAll(".board-col")[
+                column
+              ].style.backgroundColor = "blue";
             });
+
+            this._checkIfShipHit(e.target, defender, calcNum);
+
+            defender.hitShip.forEach((ship) => {
+              let row = +ship[0];
+              let column = +ship[1];
+              defender.board
+                .querySelectorAll(".board-row")
+                [row].querySelectorAll(".board-col")[
+                column
+              ].style.backgroundColor = "green";
+            });
+            // });
             this._takeTurns++;
             // SWAP
             if (this.player1.isAttack) {
@@ -205,7 +316,7 @@ class App {
     let row = hitGrid.closest(".board-row").dataset.number;
 
     if (hitGrid.style.backgroundColor === "blue") {
-      alert("HIT!!!!!");
+      console.log("HIT!!!!!");
       let shipSquare = defender.board
         .querySelectorAll(".board-row")
         [row].querySelectorAll(".board-col")[column];
@@ -225,10 +336,11 @@ class App {
   }
 
   _checkForWinner() {
-    if (this.player1.hitShip.length == 3) {
-      alert(`Congrat ${this.player2.name} you WON!`);
-    } else if (this.player2.hitShip.length == 3) {
-      alert(`Congrat ${this.player1.name} you WON!`);
+    console.log(this.player1, this.player2);
+    if (this.player1.hitShip.length == 9) {
+      console.log(`Congrat ${this.player2.name} you WON!`);
+    } else if (this.player2.hitShip.length == 9) {
+      console.log(`Congrat ${this.player1.name} you WON!`);
     }
   }
 }

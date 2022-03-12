@@ -102,3 +102,22 @@ h1 {
   right: -10px;
   z-index: -332;
 }
+
+.turn {
+  margin-top: 3rem;
+  justify-content: center;
+  outline: none;
+  border: none;
+  padding: 1rem 4rem;
+  background-color: rgb(54, 15, 15);
+  color: white;
+  font-size: 1.4rem;
+  border-radius: 8px;
+}
+
+.turn:hover {
+  background-color: black;
+  cursor: pointer;
+  transform: scale(1.05);
+  transition: all 0.3s;
+}
