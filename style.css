@@ -21,7 +21,7 @@ html {
 
 h1 {
   font-size: 5rem;
-  padding: 6rem 0rem 0rem 6rem;
+  padding: 0rem 0rem 0rem 6rem;
   color: rgb(92, 35, 35);
 }
 
@@ -120,4 +120,25 @@ h1 {
   cursor: pointer;
   transform: scale(1.05);
   transition: all 0.3s;
+}
+
+.next {
+  justify-self: center;
+  margin-right: 30rem;
+  font-size: 3rem;
+}
+
+.header {
+  display: grid;
+
+  align-items: center;
+  height: 10rem;
+  grid-template-columns: auto 1fr;
+}
+
+.attacker {
+  color: green;
+}
+.defender {
+  color: red;
 }
